@@ -1,26 +1,41 @@
 @import "tailwindcss";
 
+/* Tokens */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #0b0b0f;          /* near-black */
+  --panel: #111316;       /* card/input background */
+  --fg: #e5e7eb;          /* text */
+  --muted: #a1a1aa;       /* secondary text */
+  --accent: #ef4444;      /* red-500 */
+  --accent-600: #dc2626;  /* red-600 */
+  --ring: #f87171;        /* red-400 */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-panel: var(--panel);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-600: var(--accent-600);
+  --color-ring: var(--ring);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+html, body { height: 100%; }
 
+/* Subtle red glows on a black base */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(1000px 500px at 10% -10%, rgba(239,68,68,0.08), transparent 60%),
+    radial-gradient(800px 400px at 90% 0%, rgba(239,68,68,0.06), transparent 60%),
+    var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+}
+
+/* Nice text selection */
+::selection {
+  background: color-mix(in oklab, var(--accent) 30%, transparent);
+  color: white;
 }
