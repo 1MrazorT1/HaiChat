@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
-/* Tokens */
+/* Design tokens (v4) */
 :root {
   --bg: #0b0b0f;          /* near-black */
-  --panel: #111316;       /* card/input background */
+  --panel: #111316;       /* surface */
   --fg: #e5e7eb;          /* text */
   --muted: #a1a1aa;       /* secondary text */
   --accent: #ef4444;      /* red-500 */
@@ -12,19 +12,11 @@
 }
 
 @theme inline {
-  --color-background: var(--bg);
-  --color-foreground: var(--fg);
-  --color-panel: var(--panel);
-  --color-muted: var(--muted);
-  --color-accent: var(--accent);
-  --color-accent-600: var(--accent-600);
-  --color-ring: var(--ring);
-  --font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+  --font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
 }
 
+/* background + subtle red glow */
 html, body { height: 100%; }
-
-/* Subtle red glows on a black base */
 body {
   background:
     radial-gradient(1000px 500px at 10% -10%, rgba(239,68,68,0.08), transparent 60%),
@@ -34,8 +26,23 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Nice text selection */
-::selection {
-  background: color-mix(in oklab, var(--accent) 30%, transparent);
-  color: white;
+::selection { background: color-mix(in oklab, var(--accent) 30%, transparent); color: white; }
+
+/* helper classes */
+.glass { background-color: #0d0f12b3; backdrop-filter: blur(8px); border: 1px solid #27272a; }
+.input {
+  width: 100%;
+  border-radius: 0.75rem;
+  padding: .65rem .9rem;
+  color: var(--fg);
+  background-color: rgba(10,10,10,.7);
+  border: 1px solid #27272a;
 }
+.input::placeholder { color: var(--muted); }
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--ring); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; border-radius: .75rem; padding: .6rem 1rem; font-weight: 600; }
+.btn-primary { background: var(--accent); color:#fff; box-shadow: 0 10px 30px -10px rgba(239,68,68,.35); }
+.btn-primary:hover { background: var(--accent-600); }
+.btn-plain { border:1px solid #3f3f46; color: var(--fg); }
+.btn-plain:hover { background: rgba(24,24,27,.6); }
