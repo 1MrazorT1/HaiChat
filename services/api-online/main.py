@@ -1,5 +1,7 @@
 from mistralai import Mistral
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 
 mistral_sdk = FastAPI()
 
@@ -7,6 +9,8 @@ api_key = "ZANTdrtsERSbUZLXvjn9xVtS68kPnJDY"
 model = "mistral-medium-latest"
 
 client = Mistral(api_key=api_key)
+
+mistral_sdk.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 @mistral_sdk.get('/')
 def init():
@@ -21,8 +25,9 @@ def init():
     )
     return (res.choices[0].message.content)
 
-@mistral_sdk.post('/response/{user_message}')
-def respond(user_message: str):
+@mistral_sdk.post('/response', response_class=PlainTextResponse)
+async def respond(req: Request):
+    user_message = (await req.body()).decode("utf-8")
     res = client.chat.complete(
         model = model,
         messages = [
