@@ -1,0 +1,89 @@
+version: "3.9"
+name: haichat
+
+services:
+  api-online:
+    build:
+      context: ./services/api-online
+      dockerfile: Dockerfile
+    environment:
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
+      MISTRAL_MODEL: ${MISTRAL_MODEL}
+      APP_CORS_ORIGINS: ${CORS_ORIGINS}
+      APP_PORT: ${PORT_API_ONLINE}
+    ports:
+      - "${PORT_API_ONLINE}:${PORT_API_ONLINE}"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:${PORT_API_ONLINE}/ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  vllm:
+    profiles: ["gpu"]
+    image: vllm/vllm-openai:latest
+    command: >
+      --model ${VLLM_MODEL}
+      --gpu-memory-utilization ${VLLM_GPU_MEM}
+      --api-key ${VLLM_API_KEY}
+    environment:
+      - VLLM_DOWNLOAD_DIR=/models
+    volumes:
+      - vllm-cache:/models
+    ports:
+      - "${PORT_VLLM}:8000"
+    gpus: all
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/v1/models"]
+      interval: 20s
+      timeout: 5s
+      retries: 20
+
+  api-offline:
+    build:
+      context: ./services/api-offline
+      dockerfile: Dockerfile
+    environment:
+      APP_CORS_ORIGINS: ${CORS_ORIGINS}
+      APP_PORT: ${PORT_API_OFFLINE}
+      VLLM_BASE_URL: ${VLLM_BASE_URL:-http://vllm:8000/v1}
+      VLLM_API_KEY: ${VLLM_API_KEY}
+      VLLM_MODEL: ${VLLM_MODEL}
+    ports:
+      - "${PORT_API_OFFLINE}:${PORT_API_OFFLINE}"
+    depends_on:
+      - api-online
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:${PORT_API_OFFLINE}/ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  chat:
+    build:
+      context: ./apps/chat
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_ONLINE_ENDPOINT: ${NEXT_PUBLIC_ONLINE_ENDPOINT}
+        NEXT_PUBLIC_VLLM_CHAT: ${NEXT_PUBLIC_VLLM_CHAT}
+        NEXT_PUBLIC_VLLM_MODEL: ${NEXT_PUBLIC_VLLM_MODEL}
+        NEXT_PUBLIC_OFFLINE_API_KEY: ${NEXT_PUBLIC_OFFLINE_API_KEY}
+    environment:
+      NEXT_PUBLIC_ONLINE_ENDPOINT: ${NEXT_PUBLIC_ONLINE_ENDPOINT}
+      NEXT_PUBLIC_VLLM_CHAT: ${NEXT_PUBLIC_VLLM_CHAT}
+      NEXT_PUBLIC_VLLM_MODEL: ${NEXT_PUBLIC_VLLM_MODEL}
+      NEXT_PUBLIC_OFFLINE_API_KEY: ${NEXT_PUBLIC_OFFLINE_API_KEY}
+      PORT: ${PORT_CHAT}
+    ports:
+      - "${PORT_CHAT}:${PORT_CHAT}"
+    depends_on:
+      - api-online
+      - api-offline
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:${PORT_CHAT}"]
+      interval: 10s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  vllm-cache: {}
