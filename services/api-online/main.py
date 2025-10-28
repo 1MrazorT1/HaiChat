@@ -1,52 +1,35 @@
-from typing import List, Literal, Optional
-import os
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from starlette.responses import StreamingResponse
 from mistralai import Mistral
+from fastapi import FastAPI
 
-# ---- config ----
-API_KEY = os.getenv("MISTRAL_API_KEY")  # set in .env
-if not API_KEY:
-    raise RuntimeError("MISTRAL_API_KEY missing")
-DEFAULT_MODEL = "mistral-medium-latest"  # use "mistral-small-latest" for speed
+mistral_sdk = FastAPI()
 
-# optional: reuse one client to avoid re-init cost
-CLIENT = Mistral(api_key=API_KEY)
+api_key = "ZANTdrtsERSbUZLXvjn9xVtS68kPnJDY"
+model = "mistral-medium-latest"
 
-app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+client = Mistral(api_key=api_key)
 
-class Message(BaseModel):
-    role: Literal["system", "user", "assistant"]
-    content: str
+@mistral_sdk.get('/')
+def init():
+    res = client.chat.complete(
+        model = model,
+        messages = [
+            {
+                "role" : "user",
+                "content" : "Greet me",
+            },
+        ]
+    )
+    return (res.choices[0].message.content)
 
-class ChatBody(BaseModel):
-    messages: List[Message]
-    model: Optional[str] = DEFAULT_MODEL
-
-@app.post("/chat")
-def chat(body: ChatBody):
-    if not body.messages:
-        raise HTTPException(status_code=400, detail="messages[] required")
-
-    def stream():
-        # Mistral SDK streaming API
-        for event in CLIENT.chat.stream(
-            model=body.model or DEFAULT_MODEL,
-            messages=[m.model_dump() for m in body.messages],
-        ):
-            delta = getattr(event, "delta", None)
-            if delta:
-                # yield plain text chunks
-                yield delta
-        # final newline so clients finish cleanly
-        yield "\n"
-
-    return StreamingResponse(stream(), media_type="text/plain; charset=utf-8")
+@mistral_sdk.post('/response/{user_message}')
+def respond(user_message: str):
+    res = client.chat.complete(
+        model = model,
+        messages = [
+            {
+                "role" : "user",
+                "content" : "Very briefly" + user_message,
+            },
+        ]
+    )
+    return (res.choices[0].message.content)
