@@ -74,40 +74,13 @@ bash bin/setup.sh
 
 ```
 
-### Start the App with Docker
+### Option A: Start the App with Docker
 
 ```bash
 docker compose up --build
 ```
 
-### Launch the app 
-
-```bash
-http://localhost:3000
-```
-
-## No Docker Installation
-
-### Clone the repository
-
-```bash
-git clone https://github.com/1MrazorT1/HaiChat.git
-cd HaiChat
-
-```
-
-### Run the setup script
-
-```bash
-# Linux / macOS
-bash bin/setup.sh
-
-# Windows (PowerShell)
-.\bin\setup.ps1
-
-```
-
-### Run services Manually (Make sure you are in a Python venv)
+### Option B: Run services Manually (Make sure you are in a Python venv)
 
 In the first terminal, run:
 
