@@ -1,5 +1,11 @@
 # HaiChat
 
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue)]()
+[![Next.js](https://img.shields.io/badge/Frontend-Next.js-black)]()
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-green)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
+
 ## Table of Contents
 - [Introduction](#Introduction)
 - [Use Case Diagram](#Use-Case-Diagram)
@@ -20,13 +26,13 @@ This project was also inspired by the idea of showcasing my AI software engineer
 ## Use Case Diagram
 
 <p align="center">
-  <img src="./docs/images/use_case_diagram.png" alt="HaiChat Architecture" width="700"/>
+  <img src="./docs/images/use_case_diagram.png" alt="HaiChat Architecture" height=""/>
 </p>
 
 ## High Level Architecture
 
 <p align="center">
-  <img src="./docs/images/high_level_architecture.png" alt="HaiChat Architecture" width="700"/>
+  <img src="./docs/images/high_level_architecture.png" alt="HaiChat Architecture" height=""/>
 </p>
 
 ## Project Structure
