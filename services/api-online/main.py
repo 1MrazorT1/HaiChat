@@ -2,10 +2,14 @@ from mistralai import Mistral
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
+from dotenv import load_dotenv
+import os
 
 mistral_sdk = FastAPI()
 
-api_key = "ZANTdrtsERSbUZLXvjn9xVtS68kPnJDY"
+load_dotenv()
+
+api_key = os.getenv("MISTRAL_API_KEY")
 model = "mistral-medium-latest"
 
 client = Mistral(api_key=api_key)
@@ -33,7 +37,7 @@ async def respond(req: Request):
         messages = [
             {
                 "role" : "user",
-                "content" : "Very briefly" + user_message,
+                "content" : user_message,
             },
         ]
     )
