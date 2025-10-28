@@ -1,11 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import MessageBubble from "./MessageBubble";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
 export default function Chat() {
+  const mode = localStorage.getItem("haichat:mode")
   const [messages, setMessages] = useState<Msg[]>([
     { role: "assistant", content: "Hello there!\nHow can I help you today?" },
   ]);
@@ -34,34 +35,47 @@ export default function Chat() {
     abortRef.current = ctrl;
 
     try {
-      const res = await fetch("http://localhost:8080/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next }),
-        signal: ctrl.signal,
-      });
+      const mode = localStorage.getItem("haichat:mode");
+      const ctrl = new AbortController();
+      const userText = messages[messages.length - 1].content;
 
-      if (!res.ok || !res.body) throw new Error(await res.text());
-      setMessages(prev => [...prev, { role: "assistant", content: "" }]);
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        setMessages(prev => {
-          const last = prev[prev.length - 1];
-          if (!last || last.role !== "assistant") return prev;
-          return [...prev.slice(0, -1), { ...last, content: last.content + chunk }];
+      let res: Response;
+
+      if (mode === "offline") {
+        // send JSON; e.g. { messages: next }
+        res = await fetch("http://localhost:8080/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: next }),
+          signal: ctrl.signal,
+        });
+      } else {
+        // send/receive raw text
+        res = await fetch("http://localhost:8090/response", {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: userText,
+          signal: ctrl.signal,
         });
       }
+    
+      if (!res.ok) throw new Error(await res.text());
+    
+      let text =
+        mode === "offline"
+          ? (await res.json()).response // adapt key if different
+          : await res.text();
+      
+      
+      setMessages(prev => [...prev, { role: "assistant", content: text }]);
     } catch (e) {
       console.error(e);
       setMessages(prev => [...prev, { role: "assistant", content: "Something went wrong." }]);
     } finally {
       setPending(false);
     }
+
   }
 
   return (
@@ -69,6 +83,7 @@ export default function Chat() {
       <div className="glass rounded-2xl p-4 sm:p-6">
         <div className="mb-8">
           <h2 className="text-2xl font-semibold">Hello there!</h2>
+          <h2 className="text-2xl font-semibold">Current mode = {mode}</h2>
           <p className="text-[var(--muted)]">How can I help you today?</p>
         </div>
 
