@@ -1,4 +1,4 @@
-import Chat from "@/components/Chat";
+import Mode from "@/components/Mode";
 
 export default function Page() {
   return (
@@ -9,7 +9,7 @@ export default function Page() {
           <span className="text-sm text-[var(--muted)]">Red & Black</span>
         </div>
       </header>
-      <Chat />
+      <Mode />
     </main>
   );
 }
