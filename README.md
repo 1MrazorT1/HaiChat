@@ -7,9 +7,11 @@
 
 
 ## Table of Contents
-- [Introduction](#Introduction)
-- [Use Case Diagram](#Use-Case-Diagram)
-- [High Level Architecture](#High-Level-Architecture)
+- [Introduction](#introduction)
+- [Features](#features)
+- [Demo](#demo)
+- [Use Case Diagram](#use-case-diagram)
+- [High Level Architecture](#high-level-architecture)
 - [Project Structure](#project-structure)
 - [Installation](#installation)
 
@@ -22,6 +24,13 @@ The offline mode is build on vLLM and currently using the TinyLlama model (for p
 The idea behind this project is to offer the option for the user to choose whether they need to prioritize their privacy (maybe a company's privacy) and prefer to utilize the power of AI locally, or let them choose the cloud option that saves them compute and resources.
 
 This project was also inspired by the idea of showcasing my AI software engineering skills and practices, ranging from infrastructure setup to coding and prototyping.
+
+## Features
+
+- **Hybrid AI**: choose between local (vLLM + TinyLlama) or cloud (Mistral SDK) inference  
+- **FastAPI backend**: lightweight API integration  
+- **Next.js frontend**: dynamic chat interface with mode selector  
+- **Dockerized setup**: CPU/GPU profiles for easy deployment
 
 ## Demo
 
