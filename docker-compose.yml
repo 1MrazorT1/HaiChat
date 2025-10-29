@@ -19,45 +19,59 @@ services:
       timeout: 3s
       retries: 10
 
-  vllm:
+  api-offline-gpu:
     profiles: ["gpu"]
     image: vllm/vllm-openai:latest
-    command: >
-      --model ${VLLM_MODEL}
-      --gpu-memory-utilization ${VLLM_GPU_MEM}
-      --api-key ${VLLM_API_KEY}
+    command:
+      [
+        "--model",
+        "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+        "--gpu-memory-utilization",
+        "0.7",
+        "--api-key",
+        "testingvllm",
+        "--host",
+        "0.0.0.0"
+      ]
+    ports:
+      - "${PORT_VLLM:-8000}:8000"
+    gpus: all
     environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - VLLM_DOWNLOAD_DIR=/models
     volumes:
       - vllm-cache:/models
-    ports:
-      - "${PORT_VLLM}:8000"
-    gpus: all
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8000/v1/models"]
       interval: 20s
       timeout: 5s
       retries: 20
 
-  api-offline:
-    build:
-      context: ./services/api-offline
-      dockerfile: Dockerfile
-    environment:
-      APP_CORS_ORIGINS: ${CORS_ORIGINS}
-      APP_PORT: ${PORT_API_OFFLINE}
-      VLLM_BASE_URL: ${VLLM_BASE_URL:-http://vllm:8000/v1}
-      VLLM_API_KEY: ${VLLM_API_KEY}
-      VLLM_MODEL: ${VLLM_MODEL}
+
+  
+  api-offline-cpu:
+    profiles: ["cpu"]
+    image: vllm-cpu-noavx512
+    command:
+      [
+        "--model",
+        "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+        "--dtype",
+        "bfloat16",
+        "--api-key",
+        "testingvllm",
+        "--host",
+        "0.0.0.0"
+      ]
     ports:
-      - "${PORT_API_OFFLINE}:${PORT_API_OFFLINE}"
-    depends_on:
-      - api-online
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:${PORT_API_OFFLINE}/ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 10
+      - "${PORT_VLLM:-8000}:8000"
+    environment:
+      - VLLM_DOWNLOAD_DIR=/models
+    volumes:
+      - vllm-cache:/models
+
+
 
   chat:
     build:
@@ -69,18 +83,14 @@ services:
         NEXT_PUBLIC_VLLM_MODEL: ${NEXT_PUBLIC_VLLM_MODEL}
         NEXT_PUBLIC_OFFLINE_API_KEY: ${NEXT_PUBLIC_OFFLINE_API_KEY}
     environment:
-      NEXT_PUBLIC_ONLINE_ENDPOINT: ${NEXT_PUBLIC_ONLINE_ENDPOINT}
-      NEXT_PUBLIC_VLLM_CHAT: ${NEXT_PUBLIC_VLLM_CHAT}
-      NEXT_PUBLIC_VLLM_MODEL: ${NEXT_PUBLIC_VLLM_MODEL}
-      NEXT_PUBLIC_OFFLINE_API_KEY: ${NEXT_PUBLIC_OFFLINE_API_KEY}
-      PORT: ${PORT_CHAT}
+      PORT: ${PORT_CHAT:-3000}
+      NODE_ENV: production
     ports:
-      - "${PORT_CHAT}:${PORT_CHAT}"
+      - "${PORT_CHAT:-3000}:${PORT_CHAT:-3000}"
     depends_on:
       - api-online
-      - api-offline
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:${PORT_CHAT}"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:${PORT:-3000} >/dev/null 2>&1 || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 20
