@@ -32,14 +32,13 @@ This project was also inspired by the idea of showcasing my AI software engineer
 ## DEMO
 
 <p align="center">
-  <a>
-	  <iframe
-	    src="https://youtu.be/lV5Juwi_9nU"
-	    allow="accelerometer; autoplay; clipboard-wencrypted-media; gyroscope; picture-in-picweb-share"
-	    allowfullscreen
-	  ></iframe>
-	</a>
+  <a href="https://www.youtube.com/watch?v=lV5Juwi_9nU" target="_blank">
+    <img src="https://img.youtube.com/vi/lV5Juwi_9nU/maxresdefault.jpg"
+         alt="Demo Video"
+         width="720">
+  </a>
 </p>
+
 
 
 ## High Level Architecture
