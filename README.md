@@ -29,6 +29,19 @@ This project was also inspired by the idea of showcasing my AI software engineer
   <img src="./docs/images/use_case_diagram.png" alt="HaiChat Architecture" height=""/>
 </p>
 
+## DEMO
+
+<p align="center">
+  <a>
+	  <iframe
+	    src="https://youtu.be/lV5Juwi_9nU"
+	    allow="accelerometer; autoplay; clipboard-wencrypted-media; gyroscope; picture-in-picweb-share"
+	    allowfullscreen
+	  ></iframe>
+	</a>
+</p>
+
+
 ## High Level Architecture
 
 <p align="center">
