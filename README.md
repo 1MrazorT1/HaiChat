@@ -23,6 +23,22 @@ The idea behind this project is to offer the option for the user to choose wheth
 
 This project was also inspired by the idea of showcasing my AI software engineering skills and practices, ranging from infrastructure setup to coding and prototyping.
 
+## Demo
+
+To view the demo of this project, please visit this <a href = "https://www.youtube.com/watch?v=lV5Juwi_9nU"> Youtube video</a>.
+
+Screenshots:
+
+<p align="center">
+  <img src="./docs/images/screenshot_1.png" alt="HaiChat Architecture" height=""/>
+</p>
+
+<p align="center">
+  <img src="./docs/images/screenshot_2.png" alt="HaiChat Architecture" height=""/>
+</p>
+
+
+
 ## Use Case Diagram
 
 <p align="center">
