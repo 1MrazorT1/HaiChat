@@ -94,7 +94,7 @@ If you want to run using your GPU:
 docker compose --profile gpu up --build
 ```
 
-### Option B: Run services Manually (Make sure you are in a Python venv)
+### Option B: Run services Manually (Make sure you are in a Python venv) (Requires GPU)
 
 In the first terminal, run:
 
