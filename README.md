@@ -82,8 +82,16 @@ bash bin/setup.sh
 
 ### Option A: Start the App with Docker
 
+If you want to run using your CPU:
+
 ```bash
-docker compose up --build
+docker compose --profile cpu up --build
+```
+
+If you want to run using your GPU:
+
+```bash
+docker compose --profile gpu up --build
 ```
 
 ### Option B: Run services Manually (Make sure you are in a Python venv)
