@@ -52,7 +52,7 @@ services:
   
   api-offline-cpu:
     profiles: ["cpu"]
-    image: vllm-cpu-noavx512
+    image: 1mrazort1/vllm-cpu-noavx512:latest
     command:
       [
         "--model",
